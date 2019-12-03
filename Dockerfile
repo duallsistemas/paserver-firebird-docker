@@ -40,7 +40,7 @@ FROM ubuntu:bionic
 
 LABEL Maintainer="Duall Sistemas <duallsistemas@gmail.com>"
 LABEL Name="PAServer/Firebird"
-LABEL Version="10.3.3/3.0.2"
+LABEL Version="10.3.3/3.0.4"
 
 ENV DEBIAN_FRONTEND noninteractive
 
