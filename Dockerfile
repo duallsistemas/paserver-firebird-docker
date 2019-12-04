@@ -80,9 +80,9 @@ COPY --from=downloader /usr/local/lib/libsagui.so.2.4.7 /usr/lib/x86_64-linux-gn
 
 COPY paserver.sh /usr/bin/paserver.sh
 
-COPY dfe/* /etc/dfe/
-
 COPY mime.types /etc/
+
+COPY dfe/schemas /etc/dfe/schemas
 
 COPY duallapi.config /etc/
 
