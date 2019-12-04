@@ -55,6 +55,7 @@ RUN apt-get update && apt-get install -qy --no-install-recommends \
     tzdata \
     netbase \
     libltdl7 \
+    libgnutls30 \
     openssl1.0 \
     libc-ares2 \
     libcurl3 \
@@ -77,7 +78,9 @@ COPY --from=downloader /libtommath0_0.42.0-1.2_amd64.deb /
 
 COPY --from=downloader /usr/local/lib/libsagui.so.2.4.7 /usr/lib/x86_64-linux-gnu/
 
-COPY ./paserver.sh /usr/bin/paserver.sh
+COPY paserver.sh /usr/bin/paserver.sh
+
+COPY dfe/* /etc/dfe/
 
 COPY mime.types /etc/
 
