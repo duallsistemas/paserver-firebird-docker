@@ -38,6 +38,11 @@ RUN \
 
 FROM ubuntu:bionic
 
+###############################################################
+# Specify the timezone.
+###############################################################
+ENV TZ 'America/Sao_Paulo'
+
 LABEL Maintainer="Duall Sistemas <duallsistemas@gmail.com>"
 LABEL Name="PAServer/Firebird"
 LABEL Version="10.3.3/3.0.4"
@@ -47,6 +52,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -qy --no-install-recommends \
     ca-certificates \
     build-essential \
+    tzdata \
     netbase \
     libltdl7 \
     openssl1.0 \
@@ -78,6 +84,8 @@ COPY mime.types /etc/
 COPY duallapi.config /etc/
 
 RUN \
+    echo $TZ > /etc/timezone && \
+    dpkg-reconfigure tzdata && \
     dpkg -i libtommath0_0.42.0-1.2_amd64.deb && rm libtommath0_0.42.0-1.2_amd64.deb && \
     cd /firebird/ && ./install.sh -silent && cd .. && \
     ln -sf '/opt/firebird/bin/fbguard' /usr/bin/ && \

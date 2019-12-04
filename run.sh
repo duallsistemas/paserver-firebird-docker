@@ -12,4 +12,4 @@ docker run -p 3050:3050 -p 9090:9090 -p 64211:64211 \
 	-v $(pwd)/bin:/home/paserver \
 	--name paserver-firebird -dt --restart always paserver-firebird
 
-docker exec -it -u paserver paserver-firebird paserver.sh
+docker exec -e TZ=America/Cuiaba -it -u paserver paserver-firebird paserver.sh
