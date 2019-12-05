@@ -84,7 +84,7 @@ COPY mime.types /etc/
 
 COPY dfe/schemas /etc/dfe/schemas
 
-COPY duallapi.config /etc/
+COPY duallservice.config /etc/
 
 RUN \
     echo $TZ > /etc/timezone && \
