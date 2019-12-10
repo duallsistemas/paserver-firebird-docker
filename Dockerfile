@@ -18,21 +18,18 @@
 
 FROM ubuntu:bionic AS downloader
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get install -qy --no-install-recommends \
-    ca-certificates \
-    build-essential \
-    cmake \
-    curl \
-    libgnutls28-dev
+RUN apt-get update && \
+    apt-get -qy install --no-install-recommends apt-utils 2>&1 && \
+    apt-get -qy install ca-certificates build-essential cmake curl libgnutls28-dev
 
 RUN \
     curl -SL http://altd.embarcadero.com/releases/studio/20.0/PAServer/Release3/LinuxPAServer20.0.tar.gz | tar -zx && \
     curl -SL https://github.com/FirebirdSQL/firebird/releases/download/R3_0_4/Firebird-3.0.4.33054-0.amd64.tar.gz | tar -zx && \
     curl -SL https://launchpad.net/ubuntu/+source/libtommath/0.42.0-1.2/+build/8082257/+files/libtommath0_0.42.0-1.2_amd64.deb -o libtommath0_0.42.0-1.2_amd64.deb && \
-    curl -SL https://github.com/risoflora/libsagui/archive/v2.4.7.tar.gz | tar -zx && \
-    cd libsagui-2.4.7/ && mkdir build && cd build/ && \
+    curl -SL https://github.com/risoflora/libsagui/archive/v2.5.2.tar.gz | tar -zx && \
+    cd libsagui-2.5.2/ && mkdir build && cd build/ && \
     cmake -DSG_HTTPS_SUPPORT=ON .. && \
     make sagui install/strip
 
@@ -49,19 +46,21 @@ LABEL Version="10.3.3/3.0.4"
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update && apt-get install -qy --no-install-recommends \
-    ca-certificates \
-    build-essential \
-    tzdata \
-    netbase \
-    libltdl7 \
-    libgnutls30 \
-    openssl1.0 \
-    libc-ares2 \
-    libcurl3 \
-    libcurl-openssl1.0-dev \
-    libxml2 \
-    libxslt1.1 && \
+RUN apt-get update && \
+    apt-get -qy install --no-install-recommends apt-utils 2>&1 && \
+    apt-get -qy install \
+        ca-certificates \
+        build-essential \
+        tzdata \
+        netbase \
+        libltdl7 \
+        libgnutls30 \
+        openssl1.0 \
+        libc-ares2 \
+        libcurl3 \
+        libcurl-openssl1.0-dev \
+        libxml2 \
+        libxslt1.1 && \
     apt-get clean && apt-get autoclean && rm -rf /var/lib/apt/lists/*
 
 COPY --from=downloader /PAServer-20.0/paserver /usr/bin/
@@ -76,7 +75,7 @@ COPY --from=downloader /Firebird-3.0.4.33054-0.amd64 /firebird
 
 COPY --from=downloader /libtommath0_0.42.0-1.2_amd64.deb /
 
-COPY --from=downloader /usr/local/lib/libsagui.so.2.4.7 /usr/lib/x86_64-linux-gnu/
+COPY --from=downloader /usr/local/lib/libsagui.so.2.5.2 /usr/lib/x86_64-linux-gnu/
 
 COPY paserver.sh /usr/bin/paserver.sh
 
@@ -101,8 +100,8 @@ RUN \
     ln -sf '/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.0' '/usr/lib/x86_64-linux-gnu/libcrypto.so' && \
     ln -sf '/usr/lib/x86_64-linux-gnu/libcurl.so.4' '/usr/lib/x86_64-linux-gnu/libcurl.so' && \
     ln -sf '/usr/lib/x86_64-linux-gnu/libxml2.so.2' '/usr/lib/x86_64-linux-gnu/libxml2.so' && \
-    ln -sf '/usr/lib/x86_64-linux-gnu/libsagui.so.2.4.7' '/usr/lib/x86_64-linux-gnu/libsagui.so.2' && \
-    ln -sf '/usr/lib/x86_64-linux-gnu/libsagui.so.2.4.7' '/usr/lib/x86_64-linux-gnu/libfbclient.so' && \
+    ln -sf '/usr/lib/x86_64-linux-gnu/libsagui.so.2.5.2' '/usr/lib/x86_64-linux-gnu/libsagui.so.2' && \
+    ln -sf '/usr/lib/x86_64-linux-gnu/libsagui.so.2.5.2' '/usr/lib/x86_64-linux-gnu/libfbclient.so' && \
     ln -sf '/opt/firebird/lib/libfbclient.so' '/usr/lib/x86_64-linux-gnu/libfbclient.so' && \
     ln -sf '/opt/firebird/lib/libfbclient.so.2' '/usr/lib/x86_64-linux-gnu/libfbclient.so.2' && \
     ln -sf '/opt/firebird/lib/libfbclient.so.3.0.4' '/usr/lib/x86_64-linux-gnu/libfbclient.so.3.0.4' && \
@@ -122,3 +121,5 @@ EXPOSE 3050/tcp 9090/tcp 64211/tcp
 CMD [ "fbguard" ]
 
 WORKDIR /usr/bin
+
+ENV DEBIAN_FRONTEND=
